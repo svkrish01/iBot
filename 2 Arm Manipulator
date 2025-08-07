@@ -1,0 +1,99 @@
+/*
+Developer   - Sriram Venkata Krishna
+Date        - 07-08-2025
+Board       - Arduino Uno R3
+*/
+
+//2 Arm Manipulator
+
+#include <Servo.h>
+#include <math.h>
+
+const int Servo_1_Pin = 9;
+const int Servo_2_Pin = 10;
+
+const int Time_Delay = 1000;
+const int Length_1 = 10;
+const int Length_2 = 10;
+
+float X = -13.5;
+float Y = 13.5;
+
+float Positions[6][2] = {{-13.5, 13.5}, {-10, 10}, {-2, 12}, {1, 12}, {10, 10}, {13.5, 13.5}};
+
+float Theta_1_Deg;
+float Theta_2_Deg;
+
+Servo My_Servo_1;
+Servo My_Servo_2;
+
+void Update_Angles(float X, float Y)
+{
+  float Distance = sqrt(X*X + Y*Y);
+
+  if (Distance > (Length_1 + Length_2)) 
+  {
+    Serial.println("Target out of reach!");
+    return;
+  }
+
+  float cos_Theta_2 = (Length_1*Length_1 + Length_2*Length_2 - Distance*Distance) / (2 * Length_1 * Length_2);
+  float Theta_2_Rad = PI - acos(cos_Theta_2);
+
+  float Alpha = atan2(Y, X);
+
+  float cos_Beta = (Length_1*Length_1 + Distance*Distance - Length_2*Length_2) / (2 * Length_1 * Distance);
+  float Beta = acos(cos_Beta);
+
+  float Theta_1_Rad = Alpha - Beta;
+
+  Theta_1_Deg = Theta_1_Rad * 180.0 / PI;
+  Theta_2_Deg = Theta_2_Rad * 180.0 / PI;
+
+
+  Serial.print("Theta 1 : ");
+  Serial.print(Theta_1_Deg);
+  Serial.print(" degrees");
+
+  Serial.print(", Theta 2: ");
+  Serial.print(Theta_2_Deg);
+  Serial.println(" degrees");
+}
+
+
+void setup()
+{
+  My_Servo_1.attach(Servo_1_Pin);
+  My_Servo_2.attach(Servo_2_Pin);
+
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  for(int X = 0; X < 6; X++)
+  {
+    Update_Angles(Positions[X][0], Positions[X][0]);
+
+    My_Servo_1.write(Theta_1_Deg);
+    delay(Time_Delay);
+
+    My_Servo_2.write(Theta_2_Deg);
+    delay(Time_Delay);
+  }
+  
+  delay(Time_Delay);
+}
+
+
+/*
+Servo Motor 1 Connections -
+VCC Pin     - 5V
+GND Pin     - Ground
+Control Pin - Digital Pin 9
+
+Servo Motor 2 Connections -
+VCC Pin     - 5V
+GND Pin     - Ground
+Control Pin - Digital Pin 10
+*/
