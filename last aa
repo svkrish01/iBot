@@ -1,0 +1,57 @@
+/*
+Developer   - Sriram Venkata Krishna
+Date        - 01-06-2025
+Board       - Arduino Uno R3
+*/
+
+//Micro Servo Motor Tester
+
+#include <Servo.h>
+
+const int Servo_Pin_1 = 9;
+const int Servo_Pin_2 = 10;
+
+const int Time_Delay = 1000;
+
+int Positions[10][2] = {{90, 90}, {95, 90}, {100, 90}, {105, 90}, {110, 90}, {115, 90}, {120, 90}, {125, 90}, {130, 90}, {135, 90}};
+
+Servo My_Servo_1;
+Servo My_Servo_2;
+
+void setup()
+{
+  My_Servo_1.attach(Servo_Pin_1);
+  My_Servo_2.attach(Servo_Pin_2);
+
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  for(int X = 0; X < 10; X++)
+  {
+    int pulse_1 = map((180 - Positions[X][1]), 0, 180, 544, 2400);
+    My_Servo_1.writeMicroseconds(pulse_1);
+    delay(Time_Delay);
+
+    int pulse_2 = map(Positions[X][0], 0, 180, 544, 2400);
+    My_Servo_2.writeMicroseconds(pulse_2);
+    delay(Time_Delay);
+
+    Serial.print("Theta 1 : ");
+    Serial.print(Positions[X][0]);
+    Serial.print(" degrees");
+
+    Serial.print(", Theta 2: ");
+    Serial.print(Positions[X][1]);
+    Serial.println(" degrees");
+  }
+}
+
+
+/*
+Micro Servo Motor Connections -
+VCC Pin     - 5V
+GND Pin     - Ground
+Control Pin - Digital Pin 9
+*/
