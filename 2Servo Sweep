@@ -1,0 +1,49 @@
+/*
+Developer   - Sriram Venkata Krishna
+Date        - 01-06-2025
+Board       - Arduino Uno R3
+*/
+
+//Micro Servo Motor Tester
+
+#include <Servo.h>
+
+const int Servo_Pin_1 = 9;
+const int Servo_Pin_2 = 10;
+
+const int Time_Delay = 50;
+
+int Angle = 60;
+int Change = -3;
+
+Servo My_Servo_1;
+Servo My_Servo_2;
+
+void setup()
+{
+  My_Servo_1.attach(Servo_Pin_1);
+  My_Servo_2.attach(Servo_Pin_2);
+}
+
+void loop()
+{
+  if(Angle == 60 || Angle == 120)
+  {
+    Change = -Change;
+  }
+
+  Angle += Change;
+
+  My_Servo_1.write(Angle);
+  delay(Time_Delay);
+  My_Servo_2.write(Angle);
+  delay(Time_Delay);
+}
+
+
+/*
+Micro Servo Motor Connections -
+VCC Pin     - 5V
+GND Pin     - Ground
+Control Pin - Digital Pin 9
+*/
