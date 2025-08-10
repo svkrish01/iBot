@@ -1,0 +1,70 @@
+/*
+Developers  - Team iBot
+Date        - 09-08-2025
+Board       - Arduino Uno R3
+*/
+
+//2 DoF Arm - Freshie Rodmaps Session Code
+
+#include <Servo.h>    //Library to control Servo Motors
+
+const int Servo_Pin_1 = 9;    //Joint 1 Servo Motor Pin
+const int Servo_Pin_2 = 10;    //Joint 2 Servo Motor Pin
+
+const int Time_Delay = 500;    //Time Delay to Control the Speed of the arm
+
+int Positions[100][2] = {  {40, 152},  {42, 158},  {45, 162},  {47, 167},  {50, 172},  {52, 176},  {54, 179},  {55, 179},  {57, 179},  {59, 179},  {60, 179},  {62, 179},  {63, 179},  {65, 179},  {66, 179},  {68, 179},  {69, 179},  {71, 179},  {72, 179},  {74, 179},  {75, 179},  {77, 179},  {78, 179},  {79, 179},  {81, 178},  {82, 179},  {84, 179},  {85, 179},  {87, 179},  {88, 179},  {89, 179},  {91, 178},  {92, 179},  {94, 178},  {95, 179},  {97, 179},  {98, 179},  {99, 179},  {101, 178},  {103, 179},  {104, 179},  {105, 178},  {107, 179},  {108, 179},  {110, 179},  {112, 179},  {113, 179},  {115, 179},  {117, 179},  {118, 179},  {120, 179},  {122, 179},  {124, 179},  {125, 179},  {127, 179},  {129, 179},  {131, 179},  {133, 178},  {135, 178},  {137, 178},  {138, 177},  {140, 176},  {141, 176},  {143, 174},  {144, 173},  {146, 172},  {147, 171},  {148, 169},  {149, 167},  {149, 165},  {150, 163},  {151, 161},  {151, 158},  {151, 156},  {152, 153},  {152, 150},  {151, 146},  {151, 142},  {150, 138},  {152, 140},  {155, 145},  {158, 149},  {161, 154},  {164, 156},  {166, 158},  {168, 160},  {171, 163},  {172, 164},  {174, 165},  {175, 164},  {176, 163},  {176, 161},  {175, 158},  {174, 153},  {173, 149},  {170, 146},  {167, 141},  {164, 137},  {161, 133},  {158, 129}};
+//This Array was manually copy pasted from a Python File which implimented the Inverse Kinematics
+/*
+This is a 2d Array
+Each Sub Array hs the Angular Displacement of the Joint 1 Servo Motor and Joint 2 Servo Motor
+The First Angle corresponds to the Angular Displacement of Joint 1
+The Second Angle corresponds to the Agular Displacement of Joint 2
+*/
+
+Servo My_Servo_1;    //Declaring my Joint 1 Servo Motor as My_Servo_1
+Servo My_Servo_2;    //Declaring my Joint 2 Servo Motor as My_Servo_2
+
+int length = sizeof(Positions) / sizeof(Positions[0]);    //'Length' is the Number of of Coordinates we passed, i.e. the Number of Sub-Arrays in Array 'Positions'
+
+void setup()    //Setup Code is the initialisation for the Arduino and is run only once
+{
+  My_Servo_1.attach(Servo_Pin_1);    //Initialising the Joint 1 Servo Motor with it's Data Pin (9)
+  My_Servo_2.attach(Servo_Pin_2);    //Initialising the Joint 2 Servo Motor with it's Data Pin (10)
+
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  for(int X = 0; X < length; X++)
+  {
+
+    My_Servo_1.write(Positions[X][0]);
+    My_Servo_2.write(Positions[X][1]);
+    
+    delay(Time_Delay);
+
+  }
+
+  delay(3000);
+
+  for(int X = 0; X < length; X++)
+  {
+
+    My_Servo_1.write(Positions[length - 1- X][0]);
+    My_Servo_2.write(Positions[length - 1- X][1]);
+    
+    delay(Time_Delay);
+
+  }
+  
+}
+
+
+/*
+Micro Servo Motor Connections -
+VCC Pin     - 5V
+GND Pin     - Ground
+Control Pin - Digital Pin 9
+*/
