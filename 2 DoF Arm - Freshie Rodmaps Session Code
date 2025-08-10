@@ -6,6 +6,11 @@ Board       - Arduino Uno R3
 
 //2 DoF Arm - Freshie Rodmaps Session Code
 
+/*
+This code is for the demonstration of the working of the 2 D0f Arm for the Freshie Roadmaps Session
+The 'Positions' Array consists of the Coordinates processed by OpenCV in Google Colab via the A-Star Algorithm to follow the Shortest Path between 2 Points with some Constraints
+*/
+
 #include <Servo.h>    //Library to control Servo Motors
 
 const int Servo_Pin_1 = 9;    //Joint 1 Servo Motor Pin
@@ -15,6 +20,7 @@ const int Time_Delay = 500;    //Time Delay to Control the Speed of the arm
 
 int Positions[100][2] = {  {40, 152},  {42, 158},  {45, 162},  {47, 167},  {50, 172},  {52, 176},  {54, 179},  {55, 179},  {57, 179},  {59, 179},  {60, 179},  {62, 179},  {63, 179},  {65, 179},  {66, 179},  {68, 179},  {69, 179},  {71, 179},  {72, 179},  {74, 179},  {75, 179},  {77, 179},  {78, 179},  {79, 179},  {81, 178},  {82, 179},  {84, 179},  {85, 179},  {87, 179},  {88, 179},  {89, 179},  {91, 178},  {92, 179},  {94, 178},  {95, 179},  {97, 179},  {98, 179},  {99, 179},  {101, 178},  {103, 179},  {104, 179},  {105, 178},  {107, 179},  {108, 179},  {110, 179},  {112, 179},  {113, 179},  {115, 179},  {117, 179},  {118, 179},  {120, 179},  {122, 179},  {124, 179},  {125, 179},  {127, 179},  {129, 179},  {131, 179},  {133, 178},  {135, 178},  {137, 178},  {138, 177},  {140, 176},  {141, 176},  {143, 174},  {144, 173},  {146, 172},  {147, 171},  {148, 169},  {149, 167},  {149, 165},  {150, 163},  {151, 161},  {151, 158},  {151, 156},  {152, 153},  {152, 150},  {151, 146},  {151, 142},  {150, 138},  {152, 140},  {155, 145},  {158, 149},  {161, 154},  {164, 156},  {166, 158},  {168, 160},  {171, 163},  {172, 164},  {174, 165},  {175, 164},  {176, 163},  {176, 161},  {175, 158},  {174, 153},  {173, 149},  {170, 146},  {167, 141},  {164, 137},  {161, 133},  {158, 129}};
 //This Array was manually copy pasted from a Python File which implimented the Inverse Kinematics
+
 /*
 This is a 2d Array
 Each Sub Array hs the Angular Displacement of the Joint 1 Servo Motor and Joint 2 Servo Motor
@@ -32,39 +38,48 @@ void setup()    //Setup Code is the initialisation for the Arduino and is run on
   My_Servo_1.attach(Servo_Pin_1);    //Initialising the Joint 1 Servo Motor with it's Data Pin (9)
   My_Servo_2.attach(Servo_Pin_2);    //Initialising the Joint 2 Servo Motor with it's Data Pin (10)
 
-  Serial.begin(9600);
+  Serial.begin(9600);    
+  /*
+  Serial begin initialises the communication between the Laptop and the Arduino 
+  This is so that the Arduino can convey the current Angular Displacements with the Laptop
+  */
 }
 
-void loop()
+void loop()    //Loop Code is the Ordered Instruction Set which is run by the Arduino in a loop Indefinitely
 {
-  for(int X = 0; X < length; X++)
+  for(int X = 0; X < length; X++)    //This for loop runs iterating through values of X from 0 to 'Length' - 1
   {
 
-    My_Servo_1.write(Positions[X][0]);
-    My_Servo_2.write(Positions[X][1]);
+    My_Servo_1.write(Positions[X][0]);    //Passes the First Angle of Xth Sub-Array of 'Positions' to the Joint 1 Servo Motor
+    My_Servo_2.write(Positions[X][1]);    //Passes the Second Angle of Xth Sub-Array of 'Positions' to the Joint 2 Servo Motor
     
-    delay(Time_Delay);
+    delay(Time_Delay);    //A Time Delay for the Servos to move to their position
+    /*
+    As the Arduinio is a computer, it will pass these coordinates immedeately
+    and if there is no Time Delay the Servos will not have sufficient time to move to their respective positions
+    */
 
   }
 
-  delay(3000);
+  delay(3000);    //A time Delay of three Seconds for the Arm to Stop[ at its final position
 
-  for(int X = 0; X < length; X++)
+  for(int X = 0; X < length; X++)    //This for loop runs iterating through values of X from 0 to 'Length' - 1
   {
-
-    My_Servo_1.write(Positions[length - 1- X][0]);
-    My_Servo_2.write(Positions[length - 1- X][1]);
+    My_Servo_1.write(Positions[length - 1- X][0]);     //Passes the First Angle of ('Length' - X - 1)th Sub-Array of 'Positions' to the Joint 1 Servo Motor
+    My_Servo_2.write(Positions[length - 1- X][1]);     //Passes the Second Angle of ('Length' - X - 1)th Sub-Array of 'Positions' to the Joint 2 Servo Motor
     
-    delay(Time_Delay);
-
+    delay(Time_Delay);    //A Time Delay for the Servos to move to their position
   }
-  
+  /*
+    This loop basically traces back the same path (that the Arm followed to the Final Position) back to the Initial Position.
+  */
 }
 
 
 /*
-Micro Servo Motor Connections -
-VCC Pin     - 5V
-GND Pin     - Ground
-Control Pin - Digital Pin 9
+Servo Motor Connections -
+VCC Pins                       - 7.4V
+GND Pins                       - Ground
+Joint 1 Servo Motor Signal Pin - Digital Pin 9
+Joint 1 Servo Motor Signal Pin - Digital Pin 10
 */
